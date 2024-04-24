@@ -9,41 +9,65 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSource: 'spec'
-    versionSpec: '20.x'
-  displayName: 'Install Node.js'
+jobs:
+- job: Install_Modules_Frontend
+  displayName: 'Install Modules in /frontend'
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSource: 'spec'
+      versionSpec: '20.x'
+    displayName: 'Install Node.js'
 
-- task: Npm@1
-  displayName: 'Installing Modules in /frontend'
-  inputs:
-    command: 'install'
-    workingDir: 'frontend'
+  - task: Npm@1
+    displayName: 'Installing Modules in /frontend'
+    inputs:
+      command: 'install'
+      workingDir: 'frontend'
 
-- task: Npm@1
-  displayName: 'Installing Modules in /backend'
-  inputs:
-    command: 'install'
-    workingDir: 'backend'
+- job: Install_Modules_Backend
+  displayName: 'Install Modules in /backend'
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSource: 'spec'
+      versionSpec: '20.x'
+    displayName: 'Install Node.js'
 
-- task: Npm@1
+  - task: Npm@2
+    displayName: 'Installing Modules in /backend'
+    inputs:
+      command: 'install'
+      workingDir: 'backend'
+
+- job: Build_Frontend
   displayName: 'Building Modules in /frontend'
-  inputs:
-    command: 'custom'
-    workingDir: 'frontend'
-    customCommand: 'run build'
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSource: 'spec'
+      versionSpec: '20.x'
+    displayName: 'Install Node.js'
 
-- task: CopyFiles@2
-  inputs:
-    Contents: |
-      client/dist/**
-      server/**
-    TargetFolder: $(Build.ArtifactStagingDirectory)
+  - task: Npm@3
+    displayName: 'Building Modules in /frontend'
+    inputs:
+      command: 'custom'
+      workingDir: 'frontend'
+      customCommand: 'run build'
 
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'release'
-    publishLocation: 'Container'
+- job: Copy_Artifacts
+  displayName: 'Copy Build Artifacts'
+  steps:
+  - task: CopyFiles@2
+    inputs:
+      Contents: |
+        client/dist/**
+        server/**
+      TargetFolder: $(Build.ArtifactStagingDirectory)
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'release'
+      publishLocation: 'Container'
