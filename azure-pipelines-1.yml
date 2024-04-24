@@ -22,13 +22,13 @@ steps:
     command: 'install'
     workingDir: 'frontend'
 
-- task: Npm@1
+- task: Npm@2
   displayName: 'Installing Modules in /backend'
   inputs:
     command: 'install'
     workingDir: 'backend'
 
-- task: Npm@1
+- task: Npm@3
   displayName: 'Building Modules in /frontend'
   inputs:
     command: 'custom'
