@@ -34,7 +34,7 @@ jobs:
       versionSpec: '20.x'
     displayName: 'Install Node.js'
 
-  - task: Npm@2
+  - task: Npm@1
     displayName: 'Installing Modules in /backend'
     inputs:
       command: 'install'
@@ -49,7 +49,7 @@ jobs:
       versionSpec: '20.x'
     displayName: 'Install Node.js'
 
-  - task: Npm@3
+  - task: Npm@1
     displayName: 'Building Modules in /frontend'
     inputs:
       command: 'custom'
